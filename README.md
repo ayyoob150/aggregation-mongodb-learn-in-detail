@@ -30,6 +30,25 @@ example
 # group : it groups document by certain criteria.
 {$group :{_id : "$name", total :{$sum : "$price"}}}
 
+  here we doing staging of groups and performing $dateToString operation this will formate the
+  date what we desire like yy-mm-dd
+
+  const data = await person
+    .aggregate([
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$registered",
+            },
+          },
+          //
+        },
+      },
+    ])
+    .toArray();
+
 # project : it filters field in the document.
 {$project :{name : 1 , "companyName.title" : 1}}
 {$project :{_id : 0 , name : 1 , age : 1}}
@@ -44,6 +63,21 @@ example
             }
          },
     }
+
+in this operation we are doing staging of project and multiply two integers fields
+    const data = await person
+    .aggregate([
+ 
+      {
+        $project: {
+          _id: -1,
+          name: 1,
+          mulAgeInd: { $multiply: ["$index", "$age"] },
+        },
+      },
+     
+    ])
+    .toArray();
 
 # sort : it sorts the object in orders.
 {$sort : {score : -1}}

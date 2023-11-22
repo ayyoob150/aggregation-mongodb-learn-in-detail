@@ -172,8 +172,6 @@ const main = async () => {
   //     }
   // ]).toArray()
 
-  
-
   //this sort will give the document age ascending eyeColor ascending gender descending order
   // const data =await person.aggregate([
   //     {
@@ -196,113 +194,164 @@ const main = async () => {
   // $project query , this is only fetch that specific field that in is 1 means include and 0 is refer to exlude that field from
   // that document.
 
-//   const data = await person.aggregate([
-//     {
-//       $project: {
-//         name: 1,
-//         "company.location.country": 1,
-//       },
-//     },
-//   ]).toArray()
+  //   const data = await person.aggregate([
+  //     {
+  //       $project: {
+  //         name: 1,
+  //         "company.location.country": 1,
+  //       },
+  //     },
+  //   ]).toArray()
 
-//   const data = await person.aggregate([
-//     {
-//       $project: {
-//         _id:0,
-//         name: 1,
-//         info :{
-//             eyeColor : "$eyeColor",
-//             county : "$company.location.country"
-//         }
-//       },
-//     },
-//   ]).toArray()
+  //   const data = await person.aggregate([
+  //     {
+  //       $project: {
+  //         _id:0,
+  //         name: 1,
+  //         info :{
+  //             eyeColor : "$eyeColor",
+  //             county : "$company.location.country"
+  //         }
+  //       },
+  //     },
+  //   ]).toArray()
 
-// this query $ limit will give you the only lenth of document what you desire.
+  // this query $ limit will give you the only lenth of document what you desire.
 
-// const data = await person.aggregate([
-//     {
-//         $limit : 100
-//     }
-// ]).toArray()
+  // const data = await person.aggregate([
+  //     {
+  //         $limit : 100
+  //     }
+  // ]).toArray()
 
+  // here first we unwind this array and making every array's element to document and after that we group those document which is unwind
 
-// here first we unwind this array and making every array's element to document and after that we group those document which is unwind 
+  // const data = await person.aggregate([
+  //     {
+  //        $unwind : "$tags"
+  //     },
+  //     {
+  //         $group : {
+  //             _id : "$tags"
+  //         }
+  //     }
+  // ]).toArray()
 
-// const data = await person.aggregate([
-//     {
-//        $unwind : "$tags"
-//     },
-//     {
-//         $group : {
-//             _id : "$tags"
-//         }
-//     }
-// ]).toArray()
+  // In this query we group the age and count how many times the same age is repeat and count it with
+  // $sum accumulator Note- this accumulator work in group stage.
+  // const data = await person.aggregate([
+  //     {
+  //         $group : {
+  //             _id : "$age" , totalQuantity : {$sum : 1}
+  //         }
+  //     }
+  // ]).toArray()
 
+  // first we unwind the array and second we group it and this count the same tags how many time its happens
 
-// In this query we group the age and count how many times the same age is repeat and count it with
-// $sum accumulator Note- this accumulator work in group stage.
-// const data = await person.aggregate([
-//     {
-//         $group : { 
-//             _id : "$age" , totalQuantity : {$sum : 1}
-//         }
-//     }
-// ]).toArray()
+  // const data = await person.aggregate([
+  //     {
+  //        $unwind : "$tags"
+  //     },
+  //     {
+  //         $group : {
+  //             _id : "$tags",
+  //             count : {
+  //                 $sum : 1
+  //             }
+  //         }
+  //     }
+  // ]).toArray()
 
-// first we unwind the array and second we group it and this count the same tags how many time its happens
+  // In this operation we are grouping the eyeColor field from the documment and calculating age field avarage
+  // using $avg accumulator operator
+  // const data = await person.aggregate([
+  //     {
+  //         $group : {
+  //             _id : "$eyeColor",
+  //             ageAvg : {$avg : "$age"}
+  //         }
+  //     }
+  // ]).toArray()
 
-// const data = await person.aggregate([
-//     {
-//        $unwind : "$tags"
-//     },
-//     {
-//         $group : {
-//             _id : "$tags",
-//             count : {
-//                 $sum : 1
-//             }
-//         }
-//     }
-// ]).toArray()
+  // this unary operator give type of field like it is int , string , array or object etc
 
-// In this operation we are grouping the eyeColor field from the documment and calculating age field avarage
-// using $avg accumulator operator 
-// const data = await person.aggregate([
-//     {
-//         $group : {
-//             _id : "$eyeColor",
-//             ageAvg : {$avg : "$age"}
-//         }
-//     }
-// ]).toArray()
+  // const data = await person.aggregate([
+  //   {
+  //     $project : {
+  //       name : 1,
+  //       eyeColorType  : {$type : "$eyeColor"},
+  //       ageType : {$type : "$age"}
+  //     }
+  //   }
+  // ]).toArray()
 
-// this unary operator give type of field like it is int , string , array or object etc
+  // Document from the group stage will be written in the collection "youDesirenameCollection" .
+  // const data = await person.aggregate([
+  //   {
+  //     $project : {
+  //       name : 1,
+  //       eyeColorType  : {$type : "$eyeColor"},
+  //       ageType : {$type : "$age"}
+  //     },
+  //   },
+  //   {
+  //     $out : "outCollection"
+  //   }
+  // ]).toArray()
 
-// const data = await person.aggregate([
-//   {
-//     $project : {
-//       name : 1,
-//       eyeColorType  : {$type : "$eyeColor"},
-//       ageType : {$type : "$age"}
-//     }
-//   }
-// ]).toArray()
+  // here we doing staging of groups and performing $dateToString operation this will formate the
+  // date what we desire like yy-mm-dd
 
-// Document from the group stage will be written in the collection "youDesirenameCollection" .
-const data = await person.aggregate([
-  {
-    $project : {
-      name : 1,
-      eyeColorType  : {$type : "$eyeColor"},
-      ageType : {$type : "$age"}
-    },
-  },
-  {
-    $out : "outCollection"
-  }
-]).toArray()
+  // const data = await person
+  //   .aggregate([
+  //     {
+  //       $group: {
+  //         _id: {
+  //           $dateToString: {
+  //             format: "%Y-%m-%d",
+  //             date: "$registered",
+  //           },
+  //         },
+  //         //
+  //       },
+  //     },
+  //   ])
+  //   .toArray();
+
+  // in this operation we are doing staging of project and multiply two integers fields
+  //   const data = await person
+  //   .aggregate([
+ 
+  //     {
+  //       $project: {
+  //         _id: -1,
+  //         name: 1,
+  //         mulAgeInd: { $multiply: ["$index", "$age"] },
+  //       },
+  //     },
+     
+  //   ])
+  //   .toArray();
+
+    const data = await person
+    .aggregate([
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$registered",
+            }
+          },
+          // it will not working it will say multiply accumulator is a unary operator it will work with $ project stage
+          // totalAgeIndexValue  :{$ multiply : ["$index","$age"]},
+          totalAgeIndexValue  :{$sum : {$multiply : ["$index","$age"]}},
+          averageAge : {$avg : "$age"}
+        },
+      },
+    ])
+    .toArray();
 
   app.get("/data", (req, res) => {
     res.json(data);
